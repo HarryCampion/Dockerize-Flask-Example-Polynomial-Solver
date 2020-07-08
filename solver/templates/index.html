@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+
+<head>
+    <style type="text/css">
+        .header{
+            text-align: center;
+            background-color: rgb(136, 185, 229);
+            height: 70px;
+            line-height: 70px;
+        }
+        .chart{
+            margin-top: 20px;
+            text-align: center;
+        }
+        table, th, td {
+            text-align: center;
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+            margin-left:auto;
+            margin-right:auto;
+        }
+        #myDiv {
+            width: 50%;
+            margin: 0 auto;
+        }
+        #header2 {
+            margin-bottom: -20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h2>
+            Polynomial Solver
+        </h2>
+    </div>
+
+    <div id="header2"> 
+        <h2>
+            $$y = ax^3 + bx^2 + cx + d$$ 
+        </h2>
+    </div>
+
+    <div id="chart" class="chart">
+    </div>
+
+</body>
+
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script type="text/javascript">
+        
+        var graphs = {{ graphJSON|safe }};
+       
+        Plotly.plot('chart',graphs,{});        
+
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <div id="myDiv">
+        <table style="float: left">
+            <caption><b>Coefficients</b></caption>
+            <tbody>
+                {% for c in coefficients %}
+                    <tr>
+                        <td>{{ c[0] }}</td>
+                        <td>{{ c[1] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <table style="float: left">
+            <caption><b>Roots</b></caption>
+            <tbody>
+                {% for r in roots %}
+                    <tr>
+                        <td>{{ r[0] }}</td>
+                        <td>{{ r[1] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</html>
