@@ -1,29 +1,35 @@
-# Flask application to run part 2. 
+#main application
 
 from flask import Flask, render_template
 import numpy as np
 import plotly
 import plotly.graph_objs as go
 import json
-from helpers import *
 
+from module_one.models.sql_model import SqlMock
+from module_one.polynomial_solver import PolynomialSolver
+from module_one.helpers import read_coordinates
+
+# global data file path, get x and y coords
+file_path = "data/"
+x = read_coordinates(file_path+"x_coordinates_vector.txt")
+y = read_coordinates(file_path+"y_coordinates_vector.txt")
+
+# Create SQL db in memory and store coordinates and read the data back
+mock = SqlMock()
+mock.run_mock(table_name="coordinates", columns=["x", "y"], values=[x,y])
+x, y = list(zip(*mock.read_table(table_name="coordinates")))
+
+# Setup app
 app = Flask(__name__)
 
-def main():
-    """
-    Carries out Part 1 of task and creates graph.
-    """
-    # read x and y coords from .txt files
-    x = read_coordinates("data/x_coordinates_vector.txt")
-    y = read_coordinates("data/y_coordinates_vector.txt")
+# define app env
+app.config.from_object("config.DevelopmentConfig")
 
-    # Create SQL db in memory and store coordinates and read the data back
-    mock = SqlMock()
-    mock.run_mock(table_name="coordinates", columns=["x", "y"], values=[x,y])
-    coords = mock.read_table(table_name="coordinates")
+def main():
 
     # Fit and solve 3rd order polynomial for coordinates obtained in SQL db
-    solver = PolynomialSolver(coords=coords, deg=3)
+    solver = PolynomialSolver(x=x, y=y, deg=3)
     results = solver.solve_polynomial()
     
     new_x = np.linspace(results["x"][0], results["x"][-1], 50)
@@ -73,4 +79,4 @@ def index():
     return render_template('index.html', graphJSON=graphJSON, coefficients=coefficients, roots=roots) 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run()
