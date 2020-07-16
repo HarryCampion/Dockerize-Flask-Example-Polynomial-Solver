@@ -1,4 +1,4 @@
-#main application
+#main application - only one view point so no need for views file.
 
 from flask import Flask, render_template
 import numpy as np
